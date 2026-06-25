@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>عرض سعر تطبيق البحث عن الأرقام والأسماء</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#08080b;
+  --card:#14141a;
+  --card2:#1b1b23;
+  --text:#f7efe6;
+  --muted:#b9aa98;
+  --line:rgba(216,187,150,.14);
+  --red:#8b1e32;
+  --red2:#b12a43;
+  --beige:#d8bb96;
+  --beige2:#f1dcc1;
+  --black:#0d0d11;
+  --radius:18px;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  font-family:"Cairo", Arial, sans-serif;
+  background:
+    radial-gradient(circle at 90% 0%, rgba(177,42,67,.22), transparent 32%),
+    radial-gradient(circle at 0% 0%, rgba(216,187,150,.12), transparent 30%),
+    linear-gradient(180deg,#07070a,#101016);
+  color:var(--text);
+}
+
+body{
+  min-height:100vh;
+}
+
+.container{
+  width:min(1180px, calc(100% - 24px));
+  margin:auto;
+  padding:16px 0 28px;
+}
+
+.hero{
+  background:linear-gradient(135deg, rgba(177,42,67,.23), rgba(216,187,150,.08), rgba(20,20,26,.96));
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:22px;
+  margin-bottom:14px;
+}
+
+.hero h1{
+  margin:0 0 10px;
+  font-size:clamp(1.45rem, 5vw, 2.5rem);
+  line-height:1.35;
+  font-weight:800;
+}
+
+.hero p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.8;
+  font-size:.96rem;
+}
+
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+
+.badge{
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(216,187,150,.22);
+  background:rgba(255,255,255,.04);
+  color:var(--beige2);
+  font-size:.84rem;
+}
+
+.summary-bar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  margin-bottom:14px;
+  background:rgba(8,8,11,.9);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(216,187,150,.16);
+  border-radius:20px;
+  padding:14px;
+}
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+}
+
+.summary-label{
+  color:var(--muted);
+  font-size:.88rem;
+}
+
+.summary-total{
+  font-size:1.7rem;
+  font-weight:800;
+  color:#fff;
+}
+
+.summary-sub{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:.82rem;
+}
+
+.summary-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.btn{
+  border:0;
+  border-radius:13px;
+  padding:11px 14px;
+  font-family:inherit;
+  font-weight:700;
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btn-red{
+  background:linear-gradient(135deg,var(--red2),var(--red));
+  color:#fff;
+}
+
+.btn-light{
+  background:var(--beige);
+  color:#1d1510;
+}
+
+.btn-dark{
+  background:#1b1b23;
+  color:#fff;
+  border:1px solid rgba(216,187,150,.16);
+}
+
+.main{
+  display:grid;
+  grid-template-columns:1fr 360px;
+  gap:14px;
+}
+
+.card{
+  background:linear-gradient(180deg, rgba(20,20,26,.97), rgba(13,13,17,.97));
+  border:1px solid rgba(216,187,150,.11);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+
+.card-head{
+  padding:16px 18px;
+  border-bottom:1px solid rgba(216,187,150,.10);
+}
+
+.card-head h2{
+  margin:0;
+  font-size:1.12rem;
+  color:#fff;
+}
+
+.card-head p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:.88rem;
+  line-height:1.7;
+}
+
+.section{
+  padding:16px 18px;
+}
+
+.section + .section{
+  border-top:1px solid rgba(216,187,150,.10);
+}
+
+.section h3{
+  margin:0 0 10px;
+  font-size:1rem;
+  color:var(--beige2);
+}
+
+.options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.option{
+  position:relative;
+}
+
+.option input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+
+.option label{
+  display:block;
+  min-height:118px;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid rgba(216,187,150,.12);
+  background:rgba(255,255,255,.035);
+  cursor:pointer;
+  transition:.18s ease;
+}
+
+.option input:checked + label{
+  background:linear-gradient(135deg, rgba(139,30,50,.30), rgba(216,187,150,.08));
+  border-color:rgba(216,187,150,.34);
+}
+
+.option input:disabled + label{
+  cursor:not-allowed;
+  opacity:1;
+}
+
+.option-title{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+  font-weight:800;
+  color:#fff;
+}
+
+.check{
+  width:22px;
+  height:22px;
+  border-radius:8px;
+  border:1px solid rgba(216,187,150,.28);
+  flex-shrink:0;
+  position:relative;
+}
+
+.option input:checked + label .check{
+  background:linear-gradient(135deg,var(--beige),var(--red2));
+}
+
+.option input:checked + label .check:after{
+  content:"";
+  position:absolute;
+  width:6px;
+  height:11px;
+  border-right:2px solid #fff;
+  border-bottom:2px solid #fff;
+  transform:rotate(45deg);
+  top:3px;
+  right:7px;
+}
+
+.option-desc{
+  margin:8px 0;
+  color:var(--muted);
+  font-size:.82rem;
+  line-height:1.65;
+}
+
+.option-foot{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-top:8px;
+}
+
+.price{
+  color:var(--beige2);
+  font-weight:800;
+}
+
+.required-pill,
+.optional-pill{
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:.68rem;
+  white-space:nowrap;
+}
+
+.required-pill{
+  background:rgba(216,187,150,.12);
+  border:1px solid rgba(216,187,150,.24);
+  color:var(--beige2);
+}
+
+.optional-pill{
+  background:rgba(139,30,50,.24);
+  border:1px solid rgba(139,30,50,.42);
+  color:#fff;
+}
+
+.fields{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.field{
+  border:1px solid rgba(216,187,150,.12);
+  border-radius:16px;
+  padding:12px;
+  background:rgba(255,255,255,.03);
+}
+
+.field label{
+  display:block;
+  margin-bottom:8px;
+  color:var(--muted);
+  font-size:.86rem;
+}
+
+.field select,
+.field input{
+  width:100%;
+  border:1px solid rgba(216,187,150,.14);
+  background:#0d0d11;
+  color:#fff;
+  border-radius:12px;
+  padding:11px;
+  font-family:inherit;
+  outline:none;
+}
+
+.side{
+  position:sticky;
+  top:96px;
+  align-self:start;
+}
+
+.table-wrap{
+  padding:14px;
+}
+
+.selected-count{
+  color:var(--muted);
+  font-size:.9rem;
+  margin-bottom:10px;
+}
+
+.items{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height:420px;
+  overflow:auto;
+  padding-left:4px;
+}
+
+.item{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:11px 12px;
+  border-radius:13px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(216,187,150,.10);
+}
+
+.item-name{
+  font-size:.86rem;
+  color:#fff;
+  line-height:1.6;
+}
+
+.item-price{
+  color:var(--beige2);
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.item-type{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.72rem;
+}
+
+.empty{
+  text-align:center;
+  padding:20px 10px;
+  color:var(--muted);
+}
+
+.total-box{
+  margin:14px;
+  border-radius:16px;
+  border:1px solid rgba(216,187,150,.16);
+  overflow:hidden;
+}
+
+.total-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid rgba(216,187,150,.10);
+}
+
+.total-row:last-child{
+  border-bottom:0;
+}
+
+.total-row span:first-child{
+  color:var(--muted);
+}
+
+.total-row strong{
+  color:#fff;
+}
+
+.total-row.grand{
+  background:linear-gradient(135deg, rgba(139,30,50,.32), rgba(216,187,150,.10));
+}
+
+.total-row.grand strong{
+  font-size:1.15rem;
+}
+
+.screens{
+  margin-top:14px;
+}
+
+.screens h2{
+  margin:0 0 8px;
+  font-size:1.25rem;
+}
+
+.screens p{
+  margin:0 0 14px;
+  color:var(--muted);
+  line-height:1.8;
+}
+
+.phone-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.phone{
+  border-radius:28px;
+  padding:10px;
+  background:#08080b;
+  border:1px solid rgba(216,187,150,.15);
+}
+
+.phone-screen{
+  min-height:405px;
+  border-radius:22px;
+  overflow:hidden;
+  background:linear-gradient(180deg,#15151b,#0d0d11);
+  border:1px solid rgba(255,255,255,.06);
+  padding:14px;
+}
+
+.notch{
+  width:82px;
+  height:14px;
+  border-radius:999px;
+  background:#07070a;
+  margin:0 auto 14px;
+  border:1px solid rgba(216,187,150,.10);
+}
+
+.app-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.logo{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--red2),var(--red));
+  border:1px solid rgba(216,187,150,.25);
+  font-weight:800;
+}
+
+.app-title{
+  font-weight:800;
+  color:#fff;
+}
+
+.app-sub{
+  color:var(--muted);
+  font-size:.76rem;
+}
+
+.app-card{
+  border-radius:16px;
+  padding:13px;
+  background:linear-gradient(135deg,rgba(139,30,50,.28),rgba(216,187,150,.08));
+  border:1px solid rgba(216,187,150,.15);
+  margin-bottom:10px;
+}
+
+.app-card h4{
+  margin:0 0 5px;
+}
+
+.app-card p{
+  margin:0;
+  font-size:.78rem;
+  line-height:1.6;
+}
+
+.tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+.tab{
+  text-align:center;
+  padding:9px;
+  border-radius:12px;
+  background:rgba(255,255,255,.04);
+  color:var(--muted);
+  font-size:.82rem;
+  border:1px solid rgba(216,187,150,.10);
+}
+
+.tab.active{
+  background:rgba(139,30,50,.35);
+  color:#fff;
+}
+
+.input-like{
+  padding:11px;
+  border-radius:13px;
+  background:#0b0b0f;
+  border:1px solid rgba(216,187,150,.13);
+  color:var(--muted);
+  margin-bottom:10px;
+  font-size:.83rem;
+}
+
+.result{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  padding:10px;
+  border-radius:13px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(216,187,150,.10);
+  margin-bottom:8px;
+}
+
+.result b{
+  display:block;
+  font-size:.83rem;
+}
+
+.result small{
+  color:var(--muted);
+  font-size:.73rem;
+}
+
+.tag{
+  align-self:start;
+  border-radius:999px;
+  padding:5px 8px;
+  color:var(--beige2);
+  background:rgba(216,187,150,.10);
+  border:1px solid rgba(216,187,150,.22);
+  font-size:.7rem;
+  white-space:nowrap;
+}
+
+.tag.red{
+  color:#fff;
+  background:rgba(139,30,50,.28);
+  border-color:rgba(139,30,50,.45);
+}
+
+.plan{
+  padding:11px;
+  border-radius:14px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(216,187,150,.12);
+  margin-bottom:9px;
+}
+
+.plan.active{
+  background:linear-gradient(135deg,rgba(139,30,50,.35),rgba(216,187,150,.08));
+  border-color:rgba(216,187,150,.28);
+}
+
+.plan b{
+  display:block;
+  font-size:.86rem;
+}
+
+.plan small{
+  color:var(--muted);
+  font-size:.75rem;
+  line-height:1.5;
+}
+
+.notes{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.note{
+  padding:16px;
+}
+
+.note h3{
+  margin:0 0 8px;
+  color:var(--beige2);
+}
+
+.note ul{
+  margin:0;
+  padding:0 18px 0 0;
+}
+
+.note li{
+  margin:7px 0;
+  color:#d8cabb;
+  line-height:1.7;
+  font-size:.92rem;
+}
+
+.print-page{
+  display:none;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:980px){
+  .main{
+    grid-template-columns:1fr;
+  }
+
+  .side{
+    position:static;
+  }
+
+  .phone-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:680px){
+  .container{
+    width:calc(100% - 16px);
+    padding-top:8px;
+  }
+
+  .hero{
+    padding:18px;
+    border-radius:20px;
+  }
+
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+  .summary-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+
+  .summary-actions .btn:first-child{
+    grid-column:span 2;
+  }
+
+  .options,
+  .fields,
+  .phone-grid,
+  .notes{
+    grid-template-columns:1fr;
+  }
+
+  .option label{
+    min-height:auto;
+  }
+
+  .summary-total{
+    font-size:1.55rem;
+  }
+
+  .phone-screen{
+    min-height:340px;
+  }
+}
+
+/* ================= PRINT VIEW ================= */
+@media print{
+  @page{
+    size:A4;
+    margin:12mm;
+  }
+
+  *{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+  }
+
+  html,
+  body{
+    background:#ffffff !important;
+    color:#000000 !important;
+    width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+    overflow:visible !important;
+  }
+
+  body{
+    font-family:"Cairo", Arial, sans-serif;
+    font-size:11.5px;
+    line-height:1.5;
+  }
+
+  .app-page{
+    display:none !important;
+  }
+
+  .print-page{
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    color:#000000 !important;
+    background:#ffffff !important;
+  }
+
+  .print-cover{
+    border:1px solid #222;
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:12px;
+    page-break-inside:avoid;
+    break-inside:avoid;
+  }
+
+  .print-cover h1{
+    margin:0 0 8px;
+    font-size:22px;
+    line-height:1.4;
+    color:#000;
+  }
+
+  .print-cover p{
+    margin:0;
+    color:#333;
+    font-size:12px;
+    line-height:1.8;
+  }
+
+  .print-meta{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
+    margin-top:14px;
+  }
+
+  .print-meta-box{
+    border:1px solid #ccc;
+    border-radius:8px;
+    padding:8px;
+  }
+
+  .print-meta-box span{
+    display:block;
+    color:#555;
+    font-size:10px;
+    margin-bottom:3px;
+  }
+
+  .print-meta-box strong{
+    display:block;
+    font-size:13px;
+    color:#000;
+  }
+
+  .print-section{
+    margin-bottom:12px;
+    page-break-inside:auto;
+    break-inside:auto;
+  }
+
+  .print-section h2{
+    margin:0 0 6px;
+    padding:7px 9px;
+    background:#f2f2f2;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+    color:#000;
+  }
+
+  .print-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+    page-break-inside:auto;
+  }
+
+  .print-table thead{
+    display:table-header-group;
+  }
+
+  .print-table tr{
+    page-break-inside:avoid;
+    break-inside:avoid;
+  }
+
+  .print-table th,
+  .print-table td{
+    border:1px solid #ccc;
+    padding:7px;
+    vertical-align:top;
+    color:#000;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+  }
+
+  .print-table th{
+    background:#f5f5f5;
+    font-weight:800;
+  }
+
+  .print-table .col-no{
+    width:36px;
+    text-align:center;
+  }
+
+  .print-table .col-type{
+    width:90px;
+  }
+
+  .print-table .col-price{
+    width:95px;
+    white-space:nowrap;
+    text-align:left;
+  }
+
+  .print-summary-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    gap:8px;
+    margin-bottom:12px;
+  }
+
+  .print-summary-box{
+    border:1px solid #bbb;
+    border-radius:8px;
+    padding:9px;
+    page-break-inside:avoid;
+    break-inside:avoid;
+  }
+
+  .print-summary-box span{
+    display:block;
+    color:#555;
+    font-size:10px;
+    margin-bottom:3px;
+  }
+
+  .print-summary-box strong{
+    display:block;
+    color:#000;
+    font-size:14px;
+  }
+
+  .print-summary-box.total{
+    background:#f2f2f2;
+    border-color:#333;
+  }
+
+  .print-notes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .print-note{
+    border:1px solid #ccc;
+    border-radius:8px;
+    padding:10px;
+    page-break-inside:avoid;
+    break-inside:avoid;
+  }
+
+  .print-note h3{
+    margin:0 0 6px;
+    font-size:13px;
+    color:#000;
+  }
+
+  .print-note ul{
+    margin:0;
+    padding:0 16px 0 0;
+  }
+
+  .print-note li{
+    margin:4px 0;
+    color:#222;
+    line-height:1.6;
+  }
+
+  .print-footer{
+    margin-top:14px;
+    padding-top:8px;
+    border-top:1px solid #ccc;
+    font-size:10px;
+    color:#555;
+    text-align:center;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-page">
+  <div class="container">
+
+    <section class="hero">
+      <h1>عرض فني ومالي تفاعلي لتطبيق البحث عن الأرقام والأسماء</h1>
+      <p>
+        عرض سعر تفاعلي وخفيف يتيح للعميل اختيار البنود الاختيارية فقط، بينما تبقى البنود الأساسية محددة وغير قابلة للإلغاء.
+        الأسعار يتم تعديلها من مكان واحد فقط داخل الكود، والإجمالي الافتراضي مضبوط على 4,500 د.ك.
+      </p>
+	   <p>
+        تم تقديم العرض بتاريخ اليوم 25 يونيه 2026  بصلاحية شهرين
+<BR>
+تحياتي ، م . احمد رشوان
+      </p>
+
+      <div class="badges">
+        <span class="badge">Android Native</span>
+        <span class="badge">iOS Native</span>
+        <span class="badge">Backend + APIs</span>
+        <span class="badge">Admin Panel</span>
+        <span class="badge">OTP</span>
+        <span class="badge">Payment Gateway</span>
+        <span class="badge">Arabic / English</span>
+      </div>
+    </section>
+
+    <section class="summary-bar">
+      <div class="summary-grid">
+        <div>
+          <div class="summary-label">الإجمالي النهائي المتوقع</div>
+          <div class="summary-total" id="topTotal">0 د.ك</div>
+          <div class="summary-sub" id="defaultNote">الإجمالي الافتراضي للبنود الأساسية: 4,500 د.ك</div>
+        </div>
+
+        <div class="summary-actions">
+          <button class="btn btn-red" id="printBtn">طباعة / حفظ PDF</button>
+          <button class="btn btn-dark" id="copyBtn">نسخ الملخص</button>
+          <button class="btn btn-light" id="resetBtn">إعادة التعيين</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="main">
+
+      <div class="card">
+        <div class="card-head">
+          <h2>بنود عرض السعر</h2>
+          <p>البنود الأساسية محددة وغير قابلة للإلغاء. يمكن للعميل اختيار البنود الإضافية فقط.</p>
+        </div>
+
+        <div id="sectionsContainer"></div>
+      </div>
+
+      <aside class="card side">
+        <div class="card-head">
+          <h2>ملخص العرض</h2>
+          <p>العناصر المختارة والإجمالي النهائي</p>
+        </div>
+
+        <div class="table-wrap">
+          <div class="selected-count" id="countText">0 بند مختار</div>
+          <div class="items" id="itemsList"></div>
+        </div>
+
+        <div class="total-box">
+          <div class="total-row">
+            <span>البنود الأساسية</span>
+            <strong id="requiredTotal">0 د.ك</strong>
+          </div>
+          <div class="total-row">
+            <span>البنود الاختيارية</span>
+            <strong id="optionalTotal">0 د.ك</strong>
+          </div>
+          <div class="total-row">
+            <span>الإضافات</span>
+            <strong id="addonsTotal">0 د.ك</strong>
+          </div>
+          <div class="total-row grand">
+            <span>الإجمالي النهائي</span>
+            <strong id="grandTotal">0 د.ك</strong>
+          </div>
+        </div>
+      </aside>
+
+    </section>
+
+    <section class="screens">
+      <h2>تصور مبدئي لشاشات التطبيق</h2>
+      <p>
+        التصور التالي يستخدم فقط الألوان المقترحة: أسود + أحمر غامق، بيج + أحمر غامق، بيج + أسود.
+      </p>
+
+      <div class="phone-grid">
+
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="notch"></div>
+
+            <div class="app-top">
+              <div>
+                <div class="app-title">Jordan Lookup</div>
+                <div class="app-sub">الشاشة الرئيسية</div>
+              </div>
+              <div class="logo">J</div>
+            </div>
+
+            <div class="app-card">
+              <h4>استعلام سريع</h4>
+              <p>ابحث برقم الهاتف أو باسم الشخص واستعرض أفضل النتائج.</p>
+            </div>
+
+            <div class="tabs">
+              <div class="tab active">بحث بالرقم</div>
+              <div class="tab">بحث بالاسم</div>
+            </div>
+
+            <div class="input-like">أدخل رقم الهاتف</div>
+            <div class="input-like">أدخل اسم الشخص</div>
+
+            <div class="result">
+              <div>
+                <b>Top 10 Results</b>
+                <small>حسب التكرار والثقة والحداثة</small>
+              </div>
+              <span class="tag">جاهز</span>
+            </div>
+
+            <div class="result">
+              <div>
+                <b>رفع جهات الاتصال</b>
+                <small>بعد موافقة المستخدم</small>
+              </div>
+              <span class="tag red">مطلوب</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="notch"></div>
+
+            <div class="app-top">
+              <div>
+                <div class="app-title">نتائج البحث</div>
+                <div class="app-sub">Search Results</div>
+              </div>
+              <div class="logo">R</div>
+            </div>
+
+            <div class="input-like">079XXXXXXX</div>
+
+            <div class="result">
+              <div>
+                <b>أحمد خالد</b>
+                <small>0791234567</small>
+              </div>
+              <span class="tag">الأكثر تكرارًا</span>
+            </div>
+
+            <div class="result">
+              <div>
+                <b>Ahmed Khaled</b>
+                <small>0791234567</small>
+              </div>
+              <span class="tag">ثقة عالية</span>
+            </div>
+
+            <div class="result">
+              <div>
+                <b>الاسم محجوب</b>
+                <small>الرقم محجوب حسب الاشتراك</small>
+              </div>
+              <span class="tag red">بلوك</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="notch"></div>
+
+            <div class="app-top">
+              <div>
+                <div class="app-title">خدمة البلوك</div>
+                <div class="app-sub">Subscriptions</div>
+              </div>
+              <div class="logo">B</div>
+            </div>
+
+            <div class="plan">
+              <b>بلوك الرقم فقط</b>
+              <small>إخفاء الرقم من نتائج البحث.</small>
+            </div>
+
+            <div class="plan">
+              <b>بلوك الاسم فقط</b>
+              <small>إخفاء الاسم عند البحث بالرقم.</small>
+            </div>
+
+            <div class="plan active">
+              <b>بلوك الاسم والرقم</b>
+              <small>إخفاء كامل للبيانات الظاهرة للمستخدمين.</small>
+            </div>
+
+            <div class="result">
+              <div>
+                <b>الدفع الإلكتروني</b>
+                <small>عبر بوابة الدفع الأردنية</small>
+              </div>
+              <span class="tag red">Pay</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="notch"></div>
+
+            <div class="app-top">
+              <div>
+                <div class="app-title">التحقق والإعدادات</div>
+                <div class="app-sub">OTP / Settings</div>
+              </div>
+              <div class="logo">S</div>
+            </div>
+
+            <div class="app-card">
+              <h4>تأكيد رقم الهاتف</h4>
+              <p>إدخال كود OTP المرسل عبر SMS لإتمام التحقق.</p>
+            </div>
+
+            <div class="input-like">1 2 4 8</div>
+
+            <div class="result">
+              <div>
+                <b>اللغة</b>
+                <small>العربية / English</small>
+              </div>
+              <span class="tag">تغيير</span>
+            </div>
+
+            <div class="result">
+              <div>
+                <b>سياسة الخصوصية</b>
+                <small>عرض الشروط وسياسة الاستخدام</small>
+              </div>
+              <span class="tag red">عرض</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="notes">
+      <div class="card note">
+        <h3>ملاحظات نطاق العمل</h3>
+        <ul>
+          <li>البنود الأساسية لا يمكن للعميل إلغاؤها لأنها تمثل الحد الأدنى لتشغيل التطبيق.</li>
+          <li>العميل يستطيع اختيار البنود الإضافية فقط حسب حاجته.</li>
+          <li>قاعدة البيانات الأولية يتم استيرادها من ملف Excel بحجم يقارب 2 مليون سجل.</li>
+          <li>البحث يدعم الاسم والرقم مع عرض أفضل 10 نتائج.</li>
+          <li>خدمة البلوك تشمل ثلاث مستويات: الرقم فقط، الاسم فقط، أو كلاهما.</li>
+        </ul>
+      </div>
+
+      <div class="card note">
+        <h3>ملاحظات مالية</h3>
+        <ul>
+          <li>إجمالي البنود الأساسية الافتراضية هو 4,500 د.ك.</li>
+          <li>تكلفة خدمة OTP SMS ورسائلها على العميل.</li>
+          <li>رسوم بوابة الدفع والعمولات البنكية على العميل.</li>
+          <li>تكلفة السيرفر، الدومين، SSL، و Public IP على العميل ما لم يتم اختيار بند تجهيز السيرفر.</li>
+          <li>أي رسوم خاصة بحسابات Google Play أو Apple Developer يتحملها العميل.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="print-page">
+  <div class="print-cover">
+    <h1 id="printTitle">عرض فني ومالي لتطبيق البحث عن الأرقام والأسماء</h1>
+    <p>
+      يشمل هذا العرض تنفيذ تطبيق موبايل Native بنسختي Android و iOS، مع Backend، قاعدة بيانات،
+      لوحة إدارة عربية، وربط مع بوابة الدفع وخدمة OTP، وذلك لتطبيق البحث عن الأرقام والأسماء داخل الأردن.
+    </p>
+
+    <div class="print-meta">
+      <div class="print-meta-box">
+        <span>اسم المشروع / العميل</span>
+        <strong id="printProjectName">عرض فني ومالي</strong>
+      </div>
+      <div class="print-meta-box">
+        <span>تاريخ الطباعة</span>
+        <strong id="printDate">-</strong>
+      </div>
+      <div class="print-meta-box">
+        <span>الإجمالي النهائي</span>
+        <strong id="printGrandTop">0 د.ك</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-section">
+    <h2>ملخص مالي</h2>
+    <div class="print-summary-grid">
+      <div class="print-summary-box">
+        <span>البنود الأساسية</span>
+        <strong id="printRequiredTotal">0 د.ك</strong>
+      </div>
+      <div class="print-summary-box">
+        <span>البنود الاختيارية</span>
+        <strong id="printOptionalTotal">0 د.ك</strong>
+      </div>
+      <div class="print-summary-box">
+        <span>الإضافات</span>
+        <strong id="printAddonsTotal">0 د.ك</strong>
+      </div>
+      <div class="print-summary-box total">
+        <span>الإجمالي النهائي</span>
+        <strong id="printGrandTotal">0 د.ك</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-section">
+    <h2>العناصر المختارة</h2>
+    <table class="print-table">
+      <thead>
+        <tr>
+          <th class="col-no">#</th>
+          <th>البند</th>
+          <th class="col-type">النوع</th>
+          <th class="col-price">القيمة</th>
+        </tr>
+      </thead>
+      <tbody id="printItemsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="print-section">
+    <h2>ملاحظات نطاق العمل والملاحظات المالية</h2>
+    <div class="print-notes">
+      <div class="print-note">
+        <h3>نطاق العمل</h3>
+        <ul>
+          <li>البنود الأساسية لا يمكن إلغاؤها لأنها تمثل الحد الأدنى لتشغيل التطبيق.</li>
+          <li>العميل يستطيع اختيار البنود الإضافية فقط حسب حاجته.</li>
+          <li>قاعدة البيانات الأولية يتم استيرادها من ملف Excel بحجم يقارب 2 مليون سجل.</li>
+          <li>البحث يدعم الاسم والرقم مع عرض أفضل 10 نتائج.</li>
+          <li>خدمة البلوك تشمل ثلاث مستويات: الرقم فقط، الاسم فقط، أو كلاهما.</li>
+        </ul>
+      </div>
+
+      <div class="print-note">
+        <h3>ملاحظات مالية</h3>
+        <ul>
+          <li>تكلفة خدمة OTP SMS ورسائلها على العميل.</li>
+          <li>رسوم بوابة الدفع والعمولات البنكية على العميل.</li>
+          <li>تكلفة السيرفر، الدومين، SSL، و Public IP على العميل ما لم يتم اختيار بند تجهيز السيرفر.</li>
+          <li>أي رسوم خاصة بحسابات Google Play أو Apple Developer يتحملها العميل.</li>
+          <li>أي تعديل خارج نطاق العمل يتم تقديره والاتفاق عليه بشكل منفصل.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-footer">
+    هذا المستند تم إنشاؤه بناءً على البنود المختارة في عرض السعر التفاعلي.
+	------- م. احمد رشوان 
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+  currency: "د.ك",
+  defaultRequiredTotal: 4500,
+
+  sections: [
+    {
+      title: "1) التحليل والتصميم",
+      items: [
+        {
+          id: "analysis",
+          title: "تحليل المتطلبات",
+          label: "تحليل المتطلبات وتجهيز نطاق العمل الفني",
+          desc: "تحديد النطاق، مراجعة السيناريوهات، وتجهيز التصور الفني.",
+          price: 200,
+          required: true
+        },
+        {
+          id: "ui",
+          title: "تصميم UI/UX",
+          label: "تصميم UI/UX بسيط وعملي باللغتين",
+          desc: "تصميم واجهات عربية وإنجليزية مع دعم RTL/LTR.",
+          price: 250,
+          required: true
+        },
+        {
+          id: "logo",
+          title: "شعار وهوية بسيطة",
+          label: "تصميم شعار وهوية لونية بسيطة",
+          desc: "تصميم شعار بسيط وتطبيق الهوية على الشاشات.",
+          price: 180,
+          required: false
+        },
+        {
+          id: "policy",
+          title: "سياسة الخصوصية",
+          label: "تجهيز سياسة الخصوصية والشروط بشكل مبدئي",
+          desc: "تجهيز نصوص مبدئية للخصوصية والشروط داخل التطبيق.",
+          price: 120,
+          required: false
+        }
+      ]
+    },
+    {
+      title: "2) التطوير الأساسي",
+      items: [
+        {
+          id: "backend",
+          title: "Backend + API",
+          label: "تنفيذ Backend وقاعدة البيانات وواجهات الربط API",
+          desc: "قاعدة البيانات، APIs، منطق البحث، البلوك، والاشتراكات.",
+          price: 1000,
+          required: true
+        },
+        {
+          id: "import",
+          title: "استيراد البيانات",
+          label: "استيراد وتجهيز بيانات Excel بعدد يقارب 2 مليون سجل",
+          desc: "استيراد وتجهيز قاعدة البيانات الأولية من ملف Excel.",
+          price: 300,
+          required: true
+        },
+        {
+          id: "android",
+          title: "Android Native",
+          label: "تنفيذ تطبيق Android Native",
+          desc: "تطبيق أندرويد كامل يدعم البحث والاشتراك والإعدادات.",
+          price: 750,
+          required: true
+        },
+        {
+          id: "ios",
+          title: "iOS Native",
+          label: "تنفيذ تطبيق iOS Native",
+          desc: "تطبيق آيفون Native بنفس الوظائف الأساسية للتطبيق.",
+          price: 850,
+          required: true
+        },
+        {
+          id: "admin",
+          title: "لوحة إدارة عربية",
+          label: "تنفيذ لوحة إدارة عربية بسيطة",
+          desc: "إدارة المستخدمين، البيانات، طلبات البلوك، والاشتراكات.",
+          price: 400,
+          required: true
+        },
+        {
+          id: "push",
+          title: "Push Notifications",
+          label: "إشعارات Push Notifications",
+          desc: "إشعارات للتنبيهات، التحديثات، والعروض.",
+          price: 220,
+          required: false
+        }
+      ]
+    },
+    {
+      title: "3) الربط والتكامل",
+      items: [
+        {
+          id: "payment",
+          title: "بوابة الدفع",
+          label: "ربط بوابة الدفع الأردنية حسب API/SDK المتاح",
+          desc: "ربط الاشتراكات ببوابة الدفع المتاحة لدى العميل.",
+          price: 250,
+          required: true
+        },
+        {
+          id: "otp",
+          title: "OTP SMS",
+          label: "ربط خدمة OTP SMS",
+          desc: "ربط خدمة التحقق برسائل SMS. تكلفة الخدمة على العميل.",
+          price: 150,
+          required: true
+        },
+        {
+          id: "server",
+          title: "تجهيز السيرفر",
+          label: "تجهيز Domain + SSL + Public IP",
+          desc: "ربط الدومين، SSL، والوصول الخارجي للسيرفر المحلي.",
+          price: 250,
+          required: false
+        },
+        {
+          id: "backup",
+          title: "Backup",
+          label: "إعداد نسخ احتياطي دوري",
+          desc: "إعداد نسخ احتياطي مبدئي لقاعدة البيانات.",
+          price: 150,
+          required: false
+        }
+      ]
+    },
+    {
+      title: "4) الاختبار والدعم",
+      items: [
+        {
+          id: "testing",
+          title: "اختبار ونشر",
+          label: "اختبار النظام ومعالجة الملاحظات وتجهيز النشر",
+          desc: "اختبار التطبيق وتجهيز النشر على Google Play و App Store.",
+          price: 350,
+          required: true
+        },
+        {
+          id: "analytics",
+          title: "تقارير متقدمة",
+          label: "تقارير استخدام متقدمة",
+          desc: "إحصائيات إضافية لعمليات البحث والاستخدام والاشتراكات.",
+          price: 180,
+          required: false
+        }
+      ]
+    }
+  ],
+
+  addons: [
+    {
+      id: "support",
+      title: "مدة الدعم الإضافي بعد الشهر المجاني",
+      options: [
+        { label: "لا يوجد دعم إضافي", price: 0 },
+        { label: "دعم إضافي لمدة شهرين", price: 120 },
+        { label: "دعم إضافي لمدة 5 أشهر", price: 250 },
+        { label: "دعم إضافي لمدة 11 شهر", price: 480 }
+      ]
+    },
+    {
+      id: "speed",
+      title: "سرعة التنفيذ",
+      options: [
+      { label: "تنفيذ عادي ( 6 شهور )", price: 0 }, 
+        { label: "تنفيذ سريع ( 4 شهور )", price: 300 }, 
+        { label: "تنفيذ سريع جدًا ( 3 شهور )", price: 550 }
+      ]
+    }
+  ]
+};
+
+function money(value){
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 0
+  }).format(value) + " " + CONFIG.currency;
+}
+
+function allItems(){
+  return CONFIG.sections.flatMap(section => section.items);
+}
+
+function renderSections(){
+  const container = document.getElementById("sectionsContainer");
+
+  const sectionsHtml = CONFIG.sections.map(section => {
+    const itemsHtml = section.items.map(item => {
+      const checked = item.required ? "checked" : "";
+      const disabled = item.required ? "disabled" : "";
+      const pill = item.required
+        ? `<span class="required-pill">أساسي</span>`
+        : `<span class="optional-pill">اختياري</span>`;
+
+      return `
+        <div class="option">
+          <input
+            type="checkbox"
+            class="price-option"
+            id="${item.id}"
+            data-id="${item.id}"
+            ${checked}
+            ${disabled}
+          >
+          <label for="${item.id}">
+            <div class="option-title">
+              <span>${item.title}</span>
+              <span class="check"></span>
+            </div>
+            <div class="option-desc">${item.desc}</div>
+            <div class="option-foot">
+              <div class="price">${money(item.price)}</div>
+              ${pill}
+            </div>
+          </label>
+        </div>
+      `;
+    }).join("");
+
+    return `
+      <div class="section">
+        <h3>${section.title}</h3>
+        <div class="options">${itemsHtml}</div>
+      </div>
+    `;
+  }).join("");
+
+  const addonsHtml = `
+    <div class="section">
+      <h3>5) إضافات اختيارية</h3>
+      <div class="fields">
+        ${CONFIG.addons.map(addon => `
+          <div class="field">
+            <label for="${addon.id}">${addon.title}</label>
+            <select id="${addon.id}" class="calc-field" data-addon-id="${addon.id}">
+              ${addon.options.map(option => `
+                <option value="${option.price}" data-label="${option.label}">
+                  ${option.price === 0 ? option.label : option.label + " - " + money(option.price)}
+                </option>
+              `).join("")}
+            </select>
+          </div>
+        `).join("")}
+
+        <div class="field">
+          <label for="projectName">اسم المشروع / العميل</label>
+          <input id="projectName" type="text" placeholder="مثال: تطبيق الدليل الأردني">
+        </div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = sectionsHtml + addonsHtml;
+}
+
+function selectedItems(){
+  return allItems().filter(item => {
+    if(item.required){
+      return true;
+    }
+
+    const input = document.getElementById(item.id);
+    return input && input.checked;
+  });
+}
+
+function selectedAddons(){
+  return CONFIG.addons.map(addon => {
+    const select = document.getElementById(addon.id);
+    const selectedOption = select.options[select.selectedIndex];
+
+    return {
+      id: addon.id,
+      label: selectedOption.dataset.label,
+      price: Number(selectedOption.value || 0),
+      required: false,
+      isAddon: true
+    };
+  }).filter(addon => addon.price > 0);
+}
+
+function calculateTotals(){
+  const items = selectedItems();
+  const addons = selectedAddons();
+
+  const requiredTotal = items
+    .filter(item => item.required)
+    .reduce((sum, item) => sum + item.price, 0);
+
+  const optionalTotal = items
+    .filter(item => !item.required)
+    .reduce((sum, item) => sum + item.price, 0);
+
+  const addonsTotal = addons.reduce((sum, addon) => sum + addon.price, 0);
+  const grandTotal = requiredTotal + optionalTotal + addonsTotal;
+
+  return {
+    items,
+    addons,
+    allSelected: [...items, ...addons],
+    requiredTotal,
+    optionalTotal,
+    addonsTotal,
+    grandTotal
+  };
+}
+
+function update(){
+  const totals = calculateTotals();
+
+  document.getElementById("topTotal").textContent = money(totals.grandTotal);
+  document.getElementById("requiredTotal").textContent = money(totals.requiredTotal);
+  document.getElementById("optionalTotal").textContent = money(totals.optionalTotal);
+  document.getElementById("addonsTotal").textContent = money(totals.addonsTotal);
+  document.getElementById("grandTotal").textContent = money(totals.grandTotal);
+  document.getElementById("countText").textContent = totals.allSelected.length + " بند مختار";
+
+  const list = document.getElementById("itemsList");
+
+  if(!totals.allSelected.length){
+    list.innerHTML = `<div class="empty">لا توجد عناصر مختارة</div>`;
+    return;
+  }
+
+  list.innerHTML = totals.allSelected.map(item => {
+    let typeText = "بند اختياري";
+
+    if(item.required){
+      typeText = "بند أساسي";
+    }
+
+    if(item.isAddon){
+      typeText = "إضافة اختيارية";
+    }
+
+    return `
+      <div class="item">
+        <div>
+          <div class="item-name">${item.label}</div>
+          <div class="item-type">${typeText}</div>
+        </div>
+        <div class="item-price">${money(item.price)}</div>
+      </div>
+    `;
+  }).join("");
+
+  renderPrintView();
+}
+
+function reset(){
+  allItems().forEach(item => {
+    const input = document.getElementById(item.id);
+
+    if(!input){
+      return;
+    }
+
+    input.checked = item.required;
+  });
+
+  CONFIG.addons.forEach(addon => {
+    document.getElementById(addon.id).selectedIndex = 0;
+  });
+
+  document.getElementById("projectName").value = "";
+
+  update();
+}
+
+function itemTypeText(item){
+  if(item.isAddon){
+    return "إضافة اختيارية";
+  }
+
+  if(item.required){
+    return "بند أساسي";
+  }
+
+  return "بند اختياري";
+}
+
+function renderPrintView(){
+  const totals = calculateTotals();
+  const projectName = document.getElementById("projectName")?.value.trim() || "عرض فني ومالي";
+  const today = new Date().toLocaleDateString("ar-KW", {
+    year:"numeric",
+    month:"2-digit",
+    day:"2-digit"
+  });
+
+  document.getElementById("printProjectName").textContent = projectName;
+  document.getElementById("printDate").textContent = today;
+  document.getElementById("printGrandTop").textContent = money(totals.grandTotal);
+
+  document.getElementById("printRequiredTotal").textContent = money(totals.requiredTotal);
+  document.getElementById("printOptionalTotal").textContent = money(totals.optionalTotal);
+  document.getElementById("printAddonsTotal").textContent = money(totals.addonsTotal);
+  document.getElementById("printGrandTotal").textContent = money(totals.grandTotal);
+
+  const body = document.getElementById("printItemsBody");
+
+  body.innerHTML = totals.allSelected.map((item, index) => `
+    <tr>
+      <td class="col-no">${index + 1}</td>
+      <td>${item.label}</td>
+      <td class="col-type">${itemTypeText(item)}</td>
+      <td class="col-price">${money(item.price)}</td>
+    </tr>
+  `).join("");
+}
+
+function buildText(){
+  const name = document.getElementById("projectName").value.trim() || "عرض فني ومالي";
+  const totals = calculateTotals();
+
+  let text = `${name}\n`;
+  text += `====================\n`;
+  text += `العناصر المختارة:\n`;
+
+  totals.allSelected.forEach((item, index) => {
+    text += `${index + 1}. ${item.label} - ${money(item.price)}\n`;
+  });
+
+  text += `--------------------\n`;
+  text += `البنود الأساسية: ${money(totals.requiredTotal)}\n`;
+  text += `البنود الاختيارية: ${money(totals.optionalTotal)}\n`;
+  text += `الإضافات: ${money(totals.addonsTotal)}\n`;
+  text += `الإجمالي النهائي: ${money(totals.grandTotal)}\n`;
+
+  return text;
+}
+
+renderSections();
+
+document.querySelectorAll(".price-option, .calc-field").forEach(element => {
+  element.addEventListener("change", update);
+});
+
+document.getElementById("projectName").addEventListener("input", update);
+
+document.getElementById("resetBtn").addEventListener("click", reset);
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  try{
+    await navigator.clipboard.writeText(buildText());
+
+    const btn = document.getElementById("copyBtn");
+    const oldText = btn.textContent;
+
+    btn.textContent = "تم النسخ";
+
+    setTimeout(() => {
+      btn.textContent = oldText;
+    }, 1200);
+  }catch(e){
+    alert("تعذر النسخ التلقائي.");
+  }
+});
+
+document.getElementById("printBtn").addEventListener("click", () => {
+  renderPrintView();
+
+  setTimeout(() => {
+    window.print();
+  }, 150);
+});
+
+window.addEventListener("beforeprint", renderPrintView);
+
+update();
+</script>
+
+</body>
+</html>
